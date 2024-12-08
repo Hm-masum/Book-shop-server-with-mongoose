@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { bookServices } from './book.service';
 
-const createBook = async (req: Request, res: Response) => {
+const createBook = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const bookData = req.body;
     const result = await bookServices.createBookIntoDB(bookData);
@@ -11,34 +11,32 @@ const createBook = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    res.send({
-      status: false,
-      message: 'something went wrong',
-      error,
-    });
+    next(error);
   }
 };
 
-const getBooks = async (req: Request, res: Response) => {
+const getBooks = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const result = await bookServices.getBooksFromDB();
+    const { searchTerm } = req.query;
+
+    const result = await bookServices.getBooksFromDB(searchTerm as string);
     res.send({
       status: true,
       message: 'Books retrieved successfully',
       data: result,
     });
   } catch (error) {
-    res.send({
-      status: false,
-      message: 'something went wrong',
-      error,
-    });
+    next(error);
   }
 };
 
-const getSingleBook = async (req: Request, res: Response) => {
+const getSingleBook = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    const id = req.params.id;
+    const id = req.params.productId;
     const result = await bookServices.getSingleBookFromDB(id);
     res.send({
       status: true,
@@ -46,17 +44,13 @@ const getSingleBook = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    res.send({
-      status: false,
-      message: 'something went wrong',
-      error,
-    });
+    next(error);
   }
 };
 
-const updateBook = async (req: Request, res: Response) => {
+const updateBook = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id = req.params.id;
+    const id = req.params.productId;
     const payload = req.body;
     const result = await bookServices.updateBookFromDB(id, payload);
     res.send({
@@ -65,17 +59,13 @@ const updateBook = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    res.send({
-      status: false,
-      message: 'something went wrong',
-      error,
-    });
+    next(error);
   }
 };
 
-const deleteBook = async (req: Request, res: Response) => {
+const deleteBook = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id = req.params.id;
+    const id = req.params.productId;
     await bookServices.deleteBookFromDB(id);
     res.send({
       status: true,
@@ -83,11 +73,7 @@ const deleteBook = async (req: Request, res: Response) => {
       data: {},
     });
   } catch (error) {
-    res.send({
-      status: false,
-      message: 'something went wrong',
-      error,
-    });
+    next(error);
   }
 };
 

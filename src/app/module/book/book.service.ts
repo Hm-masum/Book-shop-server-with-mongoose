@@ -6,8 +6,19 @@ const createBookIntoDB = async (bookData: IBook) => {
   return result;
 };
 
-const getBooksFromDB = async () => {
-  const result = Book.find();
+const getBooksFromDB = async (searchText: string) => {
+  let filter = {};
+
+  if (searchText) {
+    filter = {
+      $or: [
+        { title: searchText },
+        { author: searchText },
+        { category: searchText },
+      ],
+    };
+  }
+  const result = Book.find(filter);
   return result;
 };
 
