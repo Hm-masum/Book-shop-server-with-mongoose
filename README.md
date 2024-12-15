@@ -82,7 +82,7 @@ https://book-shop-phi-rouge.vercel.app/api/products/:productId
 
 ### Products 6. Order a Book
 - When an order is placed, reduce the **quantity** in the product model.
-- If the inventory quantity goes to zero, set **inStock** to `false`.
+- If the inventory quantity goes to zero, **inStock** feild will be `false`.
 - Api:
 ```bash
 https://book-shop-phi-rouge.vercel.app/api/orders
